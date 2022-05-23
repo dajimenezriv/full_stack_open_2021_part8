@@ -1,0 +1,25 @@
+{
+  "name": "full_stack_open_2021_part8",
+  "version": "1.0.0",
+  "description": "GraphQL",
+  "main": "first.js",
+  "scripts": {
+    "start": "node first.js",
+    "dev": "nodemon first.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dajimenezriv/full_stack_open_2021_part8.git"
+  },
+  "author": "Daniel Jiménez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dajimenezriv/full_stack_open_2021_part8/issues"
+  },
+  "homepage": "https://github.com/dajimenezriv/full_stack_open_2021_part8#readme",
+  "dependencies": {
+    "apollo-server": "^3.7.0",
+    "nodemon": "^2.0.16"
+  }
+}
