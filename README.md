@@ -34,3 +34,9 @@ We need to start the server of part a.
 ```
 npm start
 ```
+
+## Part c) Database and user administration
+
+We have to configure the server to use [mongoose](https://github.com/dajimenezriv/full_stack_open_2021_part4).
+
+Explains how to use MongoDB and GraphQL. Also with user authentication.
