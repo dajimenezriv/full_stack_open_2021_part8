@@ -12,7 +12,7 @@ function App() {
   const [page, setPage] = useState('authors');
   const [token, setToken] = useState(null);
   const [message, setMessage] = useState('');
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(true);
   const client = useApolloClient();
 
   const [login, result] = useMutation(LOGIN, {
@@ -63,7 +63,7 @@ function App() {
       <Notification message={message} error={error} />
       <Authors show={page === 'authors'} />
       <Books show={page === 'books'} />
-      <NewBook show={page === 'add'} />
+      <NewBook show={page === 'add'} setMessage={setMessage} setError={setError} />
       <LoginForm show={page === 'login'} handleLogin={handleLogin} />
       <Recommendation show={page === 'recommendations'} />
     </div>

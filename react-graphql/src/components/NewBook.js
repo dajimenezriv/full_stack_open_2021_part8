@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { ADD_BOOK, ALL_BOOKS } from 'queries';
 
-function NewBook({ show }) {
+function NewBook({ show, setMessage, setError }) {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [published, setPublished] = useState('');
@@ -10,7 +10,20 @@ function NewBook({ show }) {
   const [genres, setGenres] = useState([]);
 
   const [addBook] = useMutation(ADD_BOOK, {
+    onError: (err) => {
+      setMessage(err.graphQLErrors[0].message);
+      setTimeout(() => setMessage(''), 5000);
+      setError(true);
+    },
+    onCompleted: (data) => {
+      setTitle('');
+      setPublished('');
+      setAuthor('');
+      setGenres([]);
+      setGenre('');
+    },
     update: (cache, response) => {
+      // not working
       cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => ({
         allBooks: allBooks.concat(response.data.addBook),
       }));
@@ -30,12 +43,6 @@ function NewBook({ show }) {
         genres,
       },
     });
-
-    setTitle('');
-    setPublished('');
-    setAuthor('');
-    setGenres([]);
-    setGenre('');
   };
 
   const addGenre = () => {
