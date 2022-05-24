@@ -6,6 +6,7 @@ function Books({ show }) {
   // const books = useQuery(ALL_BOOKS, { pollInterval: 2000 });
   const [genre, setGenre] = useState(null);
   const books = useQuery(ALL_BOOKS, {
+    pollInterval: 2000,
     variables: { genre },
   });
   const genres = useQuery(ALL_GENRES);

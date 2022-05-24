@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { ADD_BOOK, ALL_BOOKS } from 'queries';
+import { ADD_BOOK, ALL_AUTHORS, ALL_GENRES } from 'queries';
 
 function NewBook({ show, setMessage, setError }) {
   const [title, setTitle] = useState('');
@@ -22,12 +22,16 @@ function NewBook({ show, setMessage, setError }) {
       setGenres([]);
       setGenre('');
     },
+    // not working in query: ALL_BOOKS because the variable
+    refetchQueries: [{ query: ALL_GENRES }, { query: ALL_AUTHORS }],
+    /*
+    not working when using variable genre in the query
     update: (cache, response) => {
-      // not working
       cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => ({
         allBooks: allBooks.concat(response.data.addBook),
       }));
     },
+    */
   });
 
   if (!show) return null;
