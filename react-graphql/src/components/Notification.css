@@ -1,0 +1,15 @@
+.Notification {
+  background-color: #dbdbdb;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.Error {
+  color: red;
+  border: 2px solid red;
+}
+
+.Success {
+  color: green;
+  border: 2px solid green;
+}

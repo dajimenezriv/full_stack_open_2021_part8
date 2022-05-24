@@ -47,6 +47,7 @@ const typeDefs = gql`
   
   type Token {
     value: String!
+    favouriteGenre: String!
   }
 
   type Query {
@@ -54,6 +55,7 @@ const typeDefs = gql`
     bookCount: Int!
     allAuthors: [Author!]!
     allBooks(author: String, genre: String): [Book!]!
+    allGenres: [String!]!
     me: User
   }
 
@@ -85,7 +87,7 @@ const resolvers = {
     bookCount: async () => await Book.collection.countDocuments(),
     allAuthors: async () => await Author.find({}),
     allBooks: async (root, args) => {
-      res = await Book.find({}).populate('author');
+      let res = await Book.find({}).populate('author');
       if (args.author) {
         const author = await Author.findOne({ name: args.author });
         res = res.filter((b) => b.author.equals(author.id));
@@ -93,9 +95,11 @@ const resolvers = {
       if (args.genre) res = res.filter((b) => b.genres.includes(args.genre));
       return res;
     },
-    me: (root, args, context) => {
-      return context.currentUser
-    }
+    allGenres: async (root, args) => {
+      const res = (await Book.find({})).map((b) => b.genres);
+      return res.flat().filter((val, idx, self) => self.indexOf(val) === idx);
+    },
+    me: (root, args, context) => context.currentUser,
   },
   Mutation: {
     editAuthor: async (root, args, { currentUser }) => {
@@ -115,8 +119,8 @@ const resolvers = {
     addBook: async (root, args, { currentUser }) => {
       if (!currentUser) throw new AuthenticationError("not authenticated");
       const { author: authorName, ...otherArgs } = args;
-      const author = await Author.findOne({ name: authorName });
-      if (!author) new Author({ name: authorName }).save();
+      let author = await Author.findOne({ name: authorName });
+      if (!author) author = await new Author({ name: authorName }).save();
       try {
         return await new Book({ ...otherArgs, author }).save();
       } catch (error) {
@@ -141,7 +145,7 @@ const resolvers = {
       if (!user || args.password !== 'secret') throw new UserInputError("wrong credentials");
 
       const userForToken = { username: user.username, id: user._id };
-      return { value: jwt.sign(userForToken, JWT_SECRET) }
+      return { value: jwt.sign(userForToken, JWT_SECRET), favouriteGenre: user.favouriteGenre };
     },
   },
   Author: {

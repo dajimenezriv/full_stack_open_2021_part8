@@ -1,26 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@apollo/client';
-import { ALL_BOOKS, ALL_GENRES } from 'queries';
+import { ALL_BOOKS } from 'queries';
 
-function Books({ show }) {
-  // const books = useQuery(ALL_BOOKS, { pollInterval: 2000 });
-  const [genre, setGenre] = useState(null);
+function Recommendation({ show }) {
+  const genre = localStorage.getItem('favouriteGenre');
   const books = useQuery(ALL_BOOKS, {
+    pollInterval: 2000,
     variables: { genre },
   });
-  const genres = useQuery(ALL_GENRES);
 
   if (!show) return null;
-  if (books.loading || genres.loading) return <div>loading...</div>;
+  if (books.loading) return <div>loading...</div>;
 
   return (
     <div>
-      <h2>books</h2>
+      <h2>recommendations</h2>
 
       {(genre)
         ? (
           <div>
-            in genre
+            books in your favorite genre
             {' '}
             <b>{genre}</b>
           </div>
@@ -42,12 +41,8 @@ function Books({ show }) {
           ))}
         </tbody>
       </table>
-
-      {genres.data.allGenres.map((g) => (
-        <button key={g} type="button" onClick={() => setGenre(g)}>{g}</button>
-      ))}
     </div>
   );
 }
 
-export default Books;
+export default Recommendation;

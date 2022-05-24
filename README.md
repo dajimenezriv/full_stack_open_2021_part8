@@ -40,3 +40,8 @@ npm start
 We have to configure the server to use [mongoose](https://github.com/dajimenezriv/full_stack_open_2021_part4).
 
 Explains how to use MongoDB and GraphQL. Also with user authentication.
+
+## Part d) Login and updating the cache
+
+How to login using GraphQL and setting the token in the header.<br>
+Update cache of Apollo Client.<br>
