@@ -2,11 +2,10 @@ import React from 'react';
 import { useQuery } from '@apollo/client';
 import { ALL_BOOKS } from 'queries';
 
-function Recommendation({ show }) {
-  const genre = localStorage.getItem('favouriteGenre');
+function Recommendation({ show, favouriteGenre }) {
   const books = useQuery(ALL_BOOKS, {
     pollInterval: 2000,
-    variables: { genre },
+    variables: { genre: favouriteGenre },
   });
 
   if (!show) return null;
@@ -16,12 +15,12 @@ function Recommendation({ show }) {
     <div>
       <h2>recommendations</h2>
 
-      {(genre)
+      {(favouriteGenre)
         ? (
           <div>
             books in your favorite genre
             {' '}
-            <b>{genre}</b>
+            <b>{favouriteGenre}</b>
           </div>
         ) : null}
 

@@ -3,12 +3,8 @@ import { useQuery } from '@apollo/client';
 import { ALL_BOOKS, ALL_GENRES } from 'queries';
 
 function Books({ show }) {
-  // const books = useQuery(ALL_BOOKS, { pollInterval: 2000 });
   const [genre, setGenre] = useState(null);
-  const books = useQuery(ALL_BOOKS, {
-    pollInterval: 2000,
-    variables: { genre },
-  });
+  const books = useQuery(ALL_BOOKS, { variables: { genre }, pollInterval: 2000 });
   const genres = useQuery(ALL_GENRES);
 
   if (!show) return null;

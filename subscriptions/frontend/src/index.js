@@ -5,15 +5,24 @@ import {
   ApolloProvider,
   createHttpLink,
   InMemoryCache,
+  split,
 } from '@apollo/client';
+import { WebSocketLink } from '@apollo/client/link/ws';
 import { setContext } from '@apollo/client/link/context';
+import { getMainDefinition } from '@apollo/client/utilities';
 import App from './App';
+
+// The new configuration is due to the fact that the application must have an HTTP connection
+// as well as a WebSocket connection to the GraphQL server.
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000/',
 });
 
-localStorage.removeItem('token');
+const wsLink = new WebSocketLink({
+  uri: 'ws://localhost:4000/graphql',
+  options: { reconnect: true },
+});
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('token');
@@ -25,8 +34,20 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition'
+      && definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  authLink.concat(httpLink),
+);
+
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: splitLink,
   cache: new InMemoryCache(),
 });
 

@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useMutation, useApolloClient } from '@apollo/client';
-import { LOGIN } from 'queries';
+import {
+  useQuery,
+  useMutation,
+  useSubscription,
+  useApolloClient,
+} from '@apollo/client';
+import {
+  ALL_BOOKS,
+  BOOK_ADDED,
+  LOGIN,
+  ME,
+} from 'queries';
 import Notification from 'components/Notification';
 import LoginForm from 'components/LoginForm';
 import Recommendation from 'components/Recommendation';
@@ -13,8 +23,10 @@ function App() {
   const [token, setToken] = useState(null);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(true);
+
   const client = useApolloClient();
 
+  const me = useQuery(ME);
   const [login, result] = useMutation(LOGIN, {
     onError: (err) => {
       setMessage(err.graphQLErrors[0].message);
@@ -23,11 +35,26 @@ function App() {
     },
   });
 
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const { bookAdded } = subscriptionData.data;
+      setMessage(`'${bookAdded.title}' added`);
+      setTimeout(() => setMessage(''), 5000);
+      setError(false);
+
+      /*
+      // not working when using variable genre in the query
+      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => ({
+        allBooks: allBooks.concat(bookAdded),
+      }));
+      */
+    },
+  });
+
   useEffect(() => {
     if (result.data) {
       setToken(result.data.login.value);
       localStorage.setItem('token', result.data.login.value);
-      localStorage.setItem('favouriteGenre', result.data.login.favouriteGenre);
       setPage('authors');
     }
   }, [result.data]); // eslint-disable-line
@@ -41,6 +68,8 @@ function App() {
     localStorage.clear();
     client.resetStore();
   };
+
+  if (me.loading) return <div>loading...</div>;
 
   return (
     <div>
@@ -65,7 +94,9 @@ function App() {
       <Books show={page === 'books'} />
       <NewBook show={page === 'add'} setMessage={setMessage} setError={setError} />
       <LoginForm show={page === 'login'} handleLogin={handleLogin} />
-      <Recommendation show={page === 'recommendations'} />
+      {(me.data.me)
+        ? <Recommendation show={page === 'recommendations'} favouriteGenre={me.data.me.favouriteGenre} />
+        : null}
     </div>
   );
 }
