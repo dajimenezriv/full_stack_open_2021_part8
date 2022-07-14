@@ -46,7 +46,7 @@ Explains how to use MongoDB and GraphQL. Also with user authentication.
 How to login using GraphQL and setting the token in the header.<br>
 Update cache of Apollo Client.<br>
 
-## Part f) Fragments and subscriptions
+## Part e) Fragments and subscriptions
 
 Instead of the client sending queries to the server to get the new information.<br>
 The client will be listening to the server using subscriptions, and the server, whenever has a change sends the information to all its subscribers.<br>
